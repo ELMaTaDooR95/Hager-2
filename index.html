@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌾 صفحة هاجر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --wheat:#e8c97a;--saffron:#c9813a;--earth:#7a3e10;
+  --night:#0f0a04;--sage:#7fac6e;--dusk:#2d1a0e;
+  --card:rgba(255,248,230,0.05);--border:rgba(232,201,122,0.14);
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--night)}
+::-webkit-scrollbar-thumb{background:var(--saffron);border-radius:10px}
+
+body{font-family:'Tajawal',sans-serif;background:var(--night);min-height:100vh;overflow-x:hidden}
+
+.bg{position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 65% 55% at 10% 35%,rgba(201,129,58,.14) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 60% at 88% 70%,rgba(122,62,16,.18) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(232,201,122,.05) 0%,transparent 70%),
+    #0f0a04;
+  animation:bgB 9s ease-in-out infinite alternate}
+@keyframes bgB{0%{filter:brightness(1)}100%{filter:brightness(1.1)}}
+
+.stars-wrap{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:rgba(255,248,220,.85);
+  animation:twk var(--d,3s) ease-in-out infinite;opacity:0}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:var(--o,.7);transform:scale(1)}}
+
+.firefly{position:fixed;width:4px;height:4px;border-radius:50%;
+  background:var(--wheat);pointer-events:none;z-index:2;
+  box-shadow:0 0 8px 3px rgba(232,201,122,.7);
+  animation:ffMove var(--d,8s) ease-in-out infinite;opacity:0}
+@keyframes ffMove{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}
+  50%{transform:translate(var(--tx,30px),var(--ty,-40px));opacity:.6}
+  90%{opacity:.8}100%{transform:translate(var(--tx2,10px),var(--ty2,20px));opacity:0}}
+
+.sparkle{position:fixed;pointer-events:none;z-index:9999;font-size:16px;
+  animation:spkl 1s ease forwards;transform:translate(-50%,-50%)}
+@keyframes spkl{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,calc(-50% - 55px)) scale(.4)}}
+
+/* MUSIC BAR */
+#musicBar{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(15,10,4,.96);border-top:1px solid rgba(232,201,122,.22);
+  backdrop-filter:blur(20px);padding:10px 18px;
+  display:none;align-items:center;gap:12px}
+#musicBar.on{display:flex}
+.m-info{flex:1;min-width:0}
+.m-title{font-size:.84rem;color:var(--wheat);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-artist{font-size:.7rem;color:rgba(232,201,122,.4)}
+.m-controls{display:flex;align-items:center;gap:8px}
+.m-btn{background:rgba(232,201,122,.08);border:1px solid rgba(232,201,122,.18);
+  border-radius:50%;width:34px;height:34px;display:flex;align-items:center;
+  justify-content:center;color:var(--wheat);cursor:pointer;font-size:12px;transition:all .2s}
+.m-btn:hover{background:rgba(232,201,122,.18)}
+.m-btn.play{background:var(--saffron);border-color:var(--saffron);color:#fff;width:40px;height:40px;font-size:14px}
+.m-btn.play:hover{background:#b5722e;transform:scale(1.08)}
+.m-prog{width:100%;max-width:160px;height:4px;background:rgba(255,255,255,.1);
+  border-radius:10px;cursor:pointer;-webkit-appearance:none;appearance:none;outline:none}
+.m-prog::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--wheat);cursor:pointer}
+.m-prog::-webkit-slider-runnable-track{background:linear-gradient(90deg,var(--wheat) var(--p,0%),rgba(255,255,255,.1) var(--p,0%));height:4px;border-radius:10px}
+.note{font-size:14px;animation:nSwing 2.5s ease-in-out infinite}
+@keyframes nSwing{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+
+/* LOCK */
+#lock{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+  transition:all .9s cubic-bezier(.77,0,.18,1)}
+#lock.gone{opacity:0;pointer-events:none;transform:scale(1.15) translateY(-20px)}
+
+.lock-card{position:relative;overflow:hidden;
+  background:rgba(255,248,220,.04);border:1px solid rgba(232,201,122,.2);
+  border-radius:32px;padding:50px 38px 44px;text-align:center;
+  width:92%;max-width:400px;backdrop-filter:blur(24px);
+  box-shadow:0 0 80px rgba(201,129,58,.14),0 0 0 1px rgba(255,255,255,.03)}
+
+.lock-shimmer{position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--wheat),var(--saffron),var(--wheat),transparent);
+  background-size:200% 100%;animation:shim 2.5s linear infinite}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+.lock-name{font-family:'Amiri',serif;font-size:3rem;font-style:italic;font-weight:700;
+  background:linear-gradient(135deg,var(--wheat),var(--saffron),var(--wheat));
+  background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:nameS 3s ease infinite;margin-bottom:4px;letter-spacing:2px}
+@keyframes nameS{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.lock-origin{font-size:.87rem;color:rgba(232,201,122,.48);font-style:italic;margin-bottom:20px;letter-spacing:1px}
+.lock-emojis{font-size:26px;margin-bottom:22px;letter-spacing:6px}
+
+.pw-input{width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(232,201,122,.24);
+  border-radius:16px;padding:15px 18px;font-family:'Tajawal',sans-serif;font-size:1.4rem;
+  font-weight:800;color:var(--wheat);text-align:center;outline:none;transition:all .3s;
+  letter-spacing:8px;direction:ltr}
+.pw-input::placeholder{letter-spacing:0;color:rgba(232,201,122,.22);font-size:.9rem}
+.pw-input:focus{border-color:var(--wheat);box-shadow:0 0 26px rgba(232,201,122,.2)}
+
+.enter-btn{margin-top:16px;width:100%;
+  background:linear-gradient(135deg,var(--saffron),#9e5f1f);
+  border:none;border-radius:16px;padding:14px;font-family:'Tajawal',sans-serif;
+  font-size:1.05rem;font-weight:800;color:#fff;cursor:pointer;transition:all .25s;
+  box-shadow:0 8px 26px rgba(201,129,58,.44);letter-spacing:.5px}
+.enter-btn:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(201,129,58,.64)}
+.enter-btn:active{transform:scale(.97)}
+
+.err{color:#e8a06a;font-size:.87rem;margin-top:10px;min-height:22px;opacity:0;transition:opacity .3s}
+.err.show{opacity:1}
+.lock-hint{margin-top:18px;font-size:.75rem;color:rgba(255,255,255,.17);font-style:italic}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.shake{animation:shake .42s ease}
+
+/* APP */
+#app{position:relative;z-index:10;opacity:0;pointer-events:none;
+  transition:opacity 1.1s ease .4s;min-height:100vh;padding:26px 15px 120px}
+#app.show{opacity:1;pointer-events:all}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:36px;animation:sDown .9s ease .9s both}
+@keyframes sDown{from{opacity:0;transform:translateY(-22px)}to{opacity:1;transform:translateY(0)}}
+.header-name{font-family:'Amiri',serif;font-size:clamp(2.2rem,7vw,3.5rem);
+  font-weight:700;font-style:italic;
+  background:linear-gradient(135deg,#fde68a,var(--saffron),#e8c97a,#fde68a);
+  background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:nameS 4s ease infinite;line-height:1.2;margin-bottom:5px}
+.header-village{font-size:.9rem;color:rgba(232,201,122,.42);font-style:italic;letter-spacing:2px;margin-bottom:13px}
+.badges{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:100px;
+  font-size:.73rem;font-weight:700;border:1px solid}
+.b-date{background:rgba(232,201,122,.08);border-color:rgba(232,201,122,.24);color:var(--wheat)}
+.b-time{background:rgba(127,172,110,.08);border-color:rgba(127,172,110,.24);color:var(--sage)}
+.b-visit{background:rgba(201,129,58,.1);border-color:rgba(201,129,58,.3);color:var(--saffron)}
+
+/* GRID */
+.grid{max-width:980px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:17px}
+.full{grid-column:1/-1}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;
+  padding:25px 21px;backdrop-filter:blur(18px);position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;animation:cIn .7s ease both}
+.card:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,.38)}
+@keyframes cIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.card:nth-child(1){animation-delay:1.1s}.card:nth-child(2){animation-delay:1.25s}
+.card:nth-child(3){animation-delay:1.4s}.card:nth-child(4){animation-delay:1.55s}
+.card:nth-child(5){animation-delay:1.7s}.card:nth-child(6){animation-delay:1.85s}
+.card:nth-child(7){animation-delay:2s}.card:nth-child(8){animation-delay:2.15s}
+.card:nth-child(9){animation-delay:2.3s}
+
+.ct{position:absolute;top:0;left:0;right:0;height:3px;border-radius:24px 24px 0 0}
+.ct-w{background:linear-gradient(90deg,var(--wheat),var(--saffron))}
+.ct-s{background:linear-gradient(90deg,var(--sage),#4a8f55)}
+.ct-e{background:linear-gradient(90deg,var(--earth),var(--saffron))}
+.ct-n{background:linear-gradient(90deg,#3a6b9e,var(--sage))}
+.ct-r{background:linear-gradient(90deg,var(--wheat),var(--sage),var(--saffron),var(--earth))}
+
+.card-label{font-size:.71rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  margin-bottom:13px;display:flex;align-items:center;gap:6px}
+
+/* DAY MSG */
+.day-emoji{font-size:52px;display:block;text-align:center;margin-bottom:11px;animation:sway 4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.day-text{font-family:'Amiri',serif;font-size:1.08rem;line-height:2;color:rgba(253,246,227,.88);text-align:center;font-style:italic}
+
+/* SNACK */
+.snack-ind{background:rgba(232,201,122,.08);border:1px solid rgba(232,201,122,.17);
+  border-radius:11px;padding:9px 13px;margin-bottom:13px;font-size:.8rem;color:var(--wheat);
+  display:flex;align-items:center;gap:7px}
+.snack-txt{font-size:.97rem;line-height:1.85;color:rgba(253,246,227,.84);transition:opacity .4s}
+.snack-txt.fade{opacity:0}
+
+/* QA */
+.qa-prog-wrap{height:3px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin-bottom:11px}
+.qa-prog-fill{height:100%;background:linear-gradient(90deg,var(--wheat),var(--saffron));border-radius:10px;transition:width .5s}
+.qa-timer-txt{font-size:.7rem;color:rgba(255,255,255,.26);margin-bottom:7px}
+.qa-q{font-size:.98rem;font-weight:700;color:#fff;line-height:1.65;min-height:48px;transition:opacity .4s;margin-bottom:13px}
+.qa-q.fade{opacity:0}
+
+.answer-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(232,201,122,.17);
+  border-radius:14px;padding:12px 14px;font-family:'Tajawal',sans-serif;font-size:.92rem;
+  color:#fff;resize:none;outline:none;transition:all .3s;min-height:75px}
+.answer-input::placeholder{color:rgba(255,255,255,.24)}
+.answer-input:focus{border-color:var(--wheat);box-shadow:0 0 17px rgba(232,201,122,.17)}
+
+.send-btn{margin-top:11px;width:100%;background:linear-gradient(135deg,var(--saffron),#9e5f1f);
+  border:none;border-radius:12px;padding:11px;font-family:'Tajawal',sans-serif;
+  font-size:.92rem;font-weight:700;color:#fff;cursor:pointer;transition:all .25s;
+  box-shadow:0 5px 17px rgba(201,129,58,.38)}
+.send-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,129,58,.58)}
+.send-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.form-ok{margin-top:11px;padding:12px;background:rgba(127,172,110,.1);border:1px solid rgba(127,172,110,.27);
+  border-radius:12px;text-align:center;color:var(--sage);font-size:.87rem;display:none;animation:popIn .4s ease}
+.form-ok.show{display:block}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* CONFESSION */
+.conf-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(201,129,58,.2);
+  border-radius:14px;padding:13px 14px;font-family:'Amiri',serif;font-size:1rem;
+  color:#fff;resize:none;outline:none;transition:all .3s;min-height:95px;font-style:italic}
+.conf-input::placeholder{color:rgba(255,255,255,.2);font-style:italic}
+.conf-input:focus{border-color:var(--saffron);box-shadow:0 0 17px rgba(201,129,58,.17)}
+.conf-btn{margin-top:11px;width:100%;background:linear-gradient(135deg,var(--earth),#5a2c08);
+  border:none;border-radius:12px;padding:11px;font-family:'Tajawal',sans-serif;
+  font-size:.92rem;font-weight:700;color:var(--wheat);cursor:pointer;transition:all .25s;
+  box-shadow:0 5px 17px rgba(122,62,16,.48)}
+.conf-btn:hover{transform:translateY(-2px)}
+.conf-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* QUIZ */
+.quiz-q-txt{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.65}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;padding:10px 13px;color:rgba(255,255,255,.8);cursor:pointer;
+  font-family:'Tajawal',sans-serif;font-size:.9rem;text-align:right;transition:all .2s}
+.quiz-opt:hover{background:rgba(232,201,122,.11);border-color:var(--wheat);transform:scale(1.02)}
+.quiz-res{margin-top:12px;padding:13px;border-radius:13px;background:rgba(232,201,122,.07);
+  border:1px solid rgba(232,201,122,.19);font-size:.93rem;color:#fff;line-height:1.75;
+  display:none;animation:popIn .4s ease}
+.quiz-res.show{display:block}
+
+/* METER */
+.meter-top{font-size:.87rem;color:rgba(255,255,255,.48);margin-bottom:9px}
+.meter-bar{height:17px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden;margin-bottom:7px}
+.meter-fill{height:100%;border-radius:100px;width:0%;
+  background:linear-gradient(90deg,var(--earth),var(--saffron),var(--wheat));
+  box-shadow:0 0 17px rgba(232,201,122,.38);transition:width 1.9s cubic-bezier(.34,1.56,.64,1)}
+.meter-pct{font-size:1.55rem;font-weight:900;color:var(--wheat);margin-bottom:4px}
+.meter-desc{font-size:.83rem;color:rgba(255,255,255,.46);min-height:17px}
+
+/* MOOD */
+.mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.mood-btn{flex:1;min-width:52px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+  border-radius:13px;padding:10px 5px;text-align:center;cursor:pointer;transition:all .25s;
+  font-size:.7rem;color:rgba(255,255,255,.58)}
+.mood-btn span{display:block;font-size:21px;margin-bottom:4px}
+.mood-btn:hover{background:rgba(232,201,122,.1);border-color:rgba(232,201,122,.28);transform:scale(1.06)}
+.mood-btn.active{background:rgba(232,201,122,.14);border-color:var(--wheat);color:#fff}
+.mood-res{margin-top:12px;font-size:.93rem;color:rgba(255,255,255,.84);line-height:1.8;
+  display:none;animation:popIn .4s ease;padding:12px;
+  background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+.mood-res.show{display:block}
+
+/* ADVICE & CHALLENGE */
+.advice-icon{font-size:34px;display:block;margin-bottom:9px}
+.advice-txt{font-size:.97rem;line-height:1.9;color:rgba(253,246,227,.83);transition:opacity .4s}
+.advice-txt.fade{opacity:0}
+.chall-inner{background:rgba(127,172,110,.07);border:1px solid rgba(127,172,110,.17);
+  border-radius:13px;padding:16px;margin-top:10px}
+.chall-t{color:var(--sage);font-weight:800;font-size:.88rem;margin-bottom:6px}
+.chall-d{font-size:.92rem;color:rgba(255,255,255,.78);line-height:1.8}
+
+/* FACT */
+.fact-txt{font-size:1rem;line-height:1.9;color:rgba(253,246,227,.83);transition:opacity .4s;
+  font-family:'Amiri',serif;font-style:italic}
+.fact-txt.fade{opacity:0}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:580px){.two-col{grid-template-columns:1fr}}
+
+/* ACTION BTN */
+.action-btn{margin-top:14px;width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 15px;
+  color:rgba(255,255,255,.76);font-family:'Tajawal',sans-serif;font-size:.9rem;
+  cursor:pointer;transition:all .22s}
+.action-btn:hover{background:rgba(232,201,122,.1);border-color:rgba(232,201,122,.24);transform:scale(1.02)}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:42px;color:rgba(255,255,255,.14);
+  font-size:.76rem;font-style:italic;font-family:'Amiri',serif;animation:cIn .7s ease 2.4s both}
+
+/* CONFETTI */
+.cwrap{position:fixed;pointer-events:none;z-index:999}
+.cp{position:absolute;width:7px;height:7px;border-radius:2px;animation:cpF 1.6s ease-out forwards}
+@keyframes cpF{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--tx),var(--ty)) rotate(var(--tr));opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="stars-wrap" id="starsWrap"></div>
+<div id="firefliesWrap"></div>
+
+<audio id="bgMusic" loop preload="none">
+  <source src="https://od.lk/s/MzlfMTAxMDEzMjU1Xw/_%D8%B9%D9%85%D8%B1%D9%88_%D8%AF%D9%8A%D8%A7%D8%A8%20_%D8%A3%D9%86%D8%A7_%D8%B9%D8%A7%D9%8A%D8%B4%28MP3_160K%29%282%29.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MUSIC BAR -->
+<div id="musicBar">
+  <span class="note">🎵</span>
+  <div class="m-info">
+    <div class="m-title">أنا عايش – عمرو دياب</div>
+    <div class="m-artist">لهاجر بنت وفاء 🌾</div>
+  </div>
+  <div class="m-controls">
+    <div class="m-btn play" id="playBtn" onclick="toggleMusic()">▶</div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:.67rem;color:rgba(232,201,122,.38)" id="cTime">0:00</span>
+      <input type="range" class="m-prog" id="mProg" value="0" min="0" max="100" step="0.1" oninput="seekMusic(this.value)">
+      <span style="font-size:.67rem;color:rgba(232,201,122,.38)" id="mDur">0:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK -->
+<div id="lock">
+  <div class="lock-card" id="lockCard">
+    <div class="lock-shimmer"></div>
+    <div class="lock-name">هاجر</div>
+    <div class="lock-origin">بنت وفاء • من زعفرانة 🌾</div>
+    <div class="lock-emojis">🌙 🌾 ✨</div>
+    <input type="password" class="pw-input" id="pw"
+      placeholder="• • • • • • •" maxlength="10" inputmode="numeric"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <div class="err" id="errMsg">مش كده يا هاجر، حاولي تاني 😄</div>
+    <button class="enter-btn" onclick="unlock()">🔓 ادخلي على صفحتك</button>
+    <div class="lock-hint">رقم سري خاص بيكِ بس 🤫</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <div class="header">
+    <div class="header-name">هاجر ✨</div>
+    <div class="header-village">🌾 بنت وفاء • من زعفرانة الحلوة</div>
+    <div class="badges">
+      <span class="badge b-date" id="dateBadge">📅 ...</span>
+      <span class="badge b-time" id="timeBadge">🕐 ...</span>
+      <span class="badge b-visit" id="visitBadge">🌙 زيارة # ...</span>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1. رسالة اليوم -->
+    <div class="card">
+      <div class="ct ct-w"></div>
+      <div class="card-label" style="color:var(--wheat)">🌾 رسالة اليوم لهاجر</div>
+      <span class="day-emoji" id="dayEmoji">🌙</span>
+      <div class="day-text" id="dayText">...</div>
+    </div>
+
+    <!-- 2. سؤال دوار + فورم -->
+    <div class="card">
+      <div class="ct ct-e"></div>
+      <div class="card-label" style="color:var(--saffron)">🎯 سؤال هاجر الدوار</div>
+      <div class="qa-timer-txt" id="qaTimer">بيتغير كل 30 ثانية</div>
+      <div class="qa-prog-wrap"><div class="qa-prog-fill" id="qaFill" style="width:100%"></div></div>
+      <div class="qa-q" id="qaQ">...</div>
+      <textarea class="answer-input" id="qaAns" placeholder="اكتبي إجابتك يا بنت وفاء... 💬" rows="3"></textarea>
+      <button class="send-btn" id="sendQaBtn" onclick="sendQA()">📤 ابعتي الإجابة</button>
+      <div class="form-ok" id="qaOk">✅ وصلت إجابتك! 🌾</div>
+    </div>
+
+    <!-- 3. ركن المصارحة -->
+    <div class="card">
+      <div class="ct ct-e"></div>
+      <div class="card-label" style="color:var(--saffron)">🤫 ركن المصارحة</div>
+      <p style="font-family:'Amiri',serif;font-style:italic;font-size:.93rem;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.8">
+        لو في حاجة عايزة تقوليها، فكرة، إحساس، سؤال، أو أي حاجة جوا... اكتبيها هنا بصدق 🌙
+      </p>
+      <textarea class="conf-input" id="confText" placeholder="اكتبي اللي في قلبك..." rows="4"></textarea>
+      <button class="conf-btn" id="confBtn" onclick="sendConf()">🌾 ابعتي</button>
+      <div class="form-ok" id="confOk" style="border-color:rgba(201,129,58,.28);background:rgba(201,129,58,.08);color:var(--saffron)">
+        🌙 وصلني كلامك يا هاجر، شكراً على ثقتك 🌾
+      </div>
+    </div>
+
+    <!-- 4. ركن الليل والأكل -->
+    <div class="card">
+      <div class="ct ct-n"></div>
+      <div class="card-label" style="color:var(--sage)">🌙 ركن الليل والأكل</div>
+      <div class="snack-ind" id="snackInd">🕐 جاري التحقق من الوقت...</div>
+      <div class="snack-txt" id="snackTxt">...</div>
+      <button class="action-btn" onclick="loadSnack()">🍪 حاجة تانية</button>
+    </div>
+
+    <!-- 5. سؤال مضحك -->
+    <div class="card">
+      <div class="ct ct-s"></div>
+      <div class="card-label" style="color:var(--sage)">😂 سؤال مضحك عنك</div>
+      <div class="quiz-q-txt" id="quizQ">...</div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-res" id="quizRes"></div>
+      <button class="action-btn" id="nextQuiz" onclick="loadQuiz()" style="display:none">🎲 سؤال تاني</button>
+    </div>
+
+    <!-- 6. مقياس السعادة -->
+    <div class="card">
+      <div class="ct ct-w"></div>
+      <div class="card-label" style="color:var(--wheat)">💛 مقياس سعادة هاجر</div>
+      <div class="meter-top" id="meterLbl">جاري القياس... 🌾</div>
+      <div class="meter-bar"><div class="meter-fill" id="mFill"></div></div>
+      <div class="meter-pct" id="mPct">---</div>
+      <div class="meter-desc" id="mDesc"></div>
+      <button class="action-btn" onclick="runMeter()">🔄 قيس تاني</button>
+    </div>
+
+    <!-- 7. مزاج هاجر -->
+    <div class="card">
+      <div class="ct ct-e"></div>
+      <div class="card-label" style="color:var(--saffron)">🌈 هاجر النهارده إزاي؟</div>
+      <p style="font-size:.83rem;color:rgba(255,255,255,.4);margin-bottom:5px">اختاري مزاجك بصدق</p>
+      <div class="mood-row">
+        <div class="mood-btn" onclick="pickMood(this,'سعيدة')"><span>😊</span>سعيدة</div>
+        <div class="mood-btn" onclick="pickMood(this,'جعانة')"><span>🍕</span>جعانة</div>
+        <div class="mood-btn" onclick="pickMood(this,'زهقانة')"><span>😴</span>زهقانة</div>
+        <div class="mood-btn" onclick="pickMood(this,'زعلانة')"><span>🥺</span>زعلانة</div>
+        <div class="mood-btn" onclick="pickMood(this,'مجنونة')"><span>🤪</span>مجنونة</div>
+      </div>
+      <div class="mood-res" id="moodRes"></div>
+    </div>
+
+    <!-- 8. نصايح + تحديات -->
+    <div class="card full">
+      <div class="ct ct-r"></div>
+      <div class="two-col">
+        <div>
+          <div class="card-label" style="color:var(--sage)">📖 نصيحة لهاجر اليوم</div>
+          <span class="advice-icon" id="advIcon">💡</span>
+          <div class="advice-txt" id="advTxt">...</div>
+          <button class="action-btn" onclick="loadAdvice()">🔀 نصيحة جديدة</button>
+        </div>
+        <div>
+          <div class="card-label" style="color:var(--wheat)">🏆 تحدي هاجر اليوم</div>
+          <div class="chall-inner">
+            <div class="chall-t" id="challT">...</div>
+            <div class="chall-d" id="challD">...</div>
+          </div>
+          <button class="action-btn" onclick="loadChallenge();burst(this)">🎲 تحدي جديد</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. حكاوي زعفرانة -->
+    <div class="card full">
+      <div class="ct ct-s"></div>
+      <div class="card-label" style="color:var(--sage)">🌾 من حكاوي زعفرانة</div>
+      <div class="fact-txt" id="factTxt">...</div>
+      <button class="action-btn" onclick="loadFact()">🌙 حكاية تانية</button>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    صُنعت بكل الحب لهاجر بنت وفاء • من زعفرانة الجميلة 🌾<br>بتتجدد كل يوم وكل زيارة ✨
+  </div>
+</div>
+
+<script>
+const PASSWORD = "1712026";
+const FORM = "https://formspree.io/f/mzdarvpb";
+
+// ── DATA ──
+const dailyMsgs = [
+  {e:'🌾',t:'يا هاجر، في ناس اسمها بيحمل ريحة الأرض وطيبة القلب. اسمك منهم. 💛'},
+  {e:'🌙',t:'البيت لما بيبقى هادي والكل نايم، إنتِ صاحية وبتاكلي... في ده حاجة حلوة. الليل وقتك إنتِ 🍪'},
+  {e:'☀️',t:'زعفرانة الحلوة ربتها كويس، وبنت وفاء كملت الباقي. النتيجة؟ هاجر 🌾'},
+  {e:'🌿',t:'الطيبة مش ضعف والفرح مش استهتار. إنتِ عارفة تجمعيهم مع بعض وده موهبة 💚'},
+  {e:'🌸',t:'الضحكة اللي بتيجي من قلبك دي أحسن معزوفة في الدنيا. متوقفيهاش 😄'},
+  {e:'🍃',t:'في أيام بتبقي فيها تقيلة. خليكِ عارفة إن الفجر بييجي بعد أطول ليل. دايماً 🌙'},
+  {e:'⭐',t:'مش محتاجة تبقي غير اللي إنتِ عليه. النسخة الأصلية من هاجر كافية وزيادة 💛'},
+  {e:'🌻',t:'بنت وفاء. الاسم ده وحده بيقول حاجات كتير عن التربية والأصل والطيبة 🌾'},
+  {e:'🎶',t:'الأغنية اللي بتعجبك من غير سبب، ده قلبك بيقولك إنه محتاج إحساس معين. سمعيه 💙'},
+  {e:'🌙',t:'الليل الهادي وإنتِ صاحية لوحدك، ده وقت خاص جداً. استمتعي بيه 🍵'},
+  {e:'🌾',t:'من زعفرانة للدنيا الكبيرة، بس الجذور بتفضل في الأرض اللي كبرتِ عليها 💛'},
+  {e:'🌿',t:'إنتِ بتهزري وبتضحكي، بس في جوا ده قلب واعي وحساس. الاتنين مع بعض نادرين 🌸'},
+];
+
+const rotatingQs = [
+  'إيه آخر حاجة ضحكتِ منها لوحدك وإنتِ بتفتكريها؟ 😄',
+  'لو تعملي أكلة دلوقتي في الليل من غير ما حد يشوفك، هتعملي إيه؟ 🍕',
+  'إيه الحاجة اللي لو قالهالك حد من قلبه هتفرحي بيها أكتر حاجة؟',
+  'إيه آخر حاجة عملتيها وحسيتِ بعدها بفخر من نفسك؟',
+  'لو تكتبي رسالة لنفسك قبل 5 سنين، إيه أهم جملة فيها؟',
+  'إيه الصوت اللي بيريحك أكتر؟ المطر، الموج، الهدوء، ولا غيرهم؟',
+  'لو يومك كان أغنية، أغنية مين هيبقى؟ وليه؟',
+  'إيه الحاجة اللي بتبقي فيها نسخة أحسن من نفسك؟',
+  'الضحكة اللي بتيجي من غير سبب، بتيجيكِ على فكرة إيه؟',
+  'لو عندك يوم كامل لوحدك، هتعمليه إيه بالظبط؟',
+  'إيه حاجة كنتِ خايفة منها زمان واتعلمتِ إنها مش مخيفة؟',
+  'إيه الحاجة اللي بتخليكِ تحسي إنك في مكانك الصح؟',
+  'لو تقدري تنسي حاجة واحدة من حياتك، هتنسي إيه؟',
+  'إيه أحلى هدية اتهديتيها في حياتك؟ ولو مكانتش حاجة مادية؟',
+];
+
+const quizzes = [
+  {
+    q:'هاجر لما البيت بيينام والكل نايم، إيه اللي بيتعمل؟',
+    opts:['بتنام على طول 😇','بتفتح الثلاجة بهدوء 😂','بتتفرج على حاجة','بتبعت رسايل لمين صاحي'],
+    res:['مش هاجر اللي بنعرفها 😄','✅ الثلاجة صاحبة الليل الحقيقية! والأكل بيبقى أحلى لما البيت هادي 😂','موسم بيتشاف بدون إزعاج، ده فن في حد ذاته 🎬','الناس الكيفية بتتكلم بالليل، الهدوء بيفتح المواضيع 🌙']
+  },
+  {
+    q:'هاجر لما بتزعل من حد بتعمل إيه؟',
+    opts:['بتقوله على طول','بتصمت وتبتعد','بتشتكي لصاحبتها','بتاكل وتنسى 😂'],
+    res:['الصراحة دي شجاعة مش كل الناس عندها 💛','الصمت أحياناً بيقول أكتر من أي كلام 🌙','الصاحبة اللي بتسمع دي كنز حقيقي 💚','✅ الأكل علاج معترف بيه من زعفرانة لحد آخر الدنيا 😂🍕']
+  },
+  {
+    q:'لو هاجر لاقت حاجة حلوة في المحل، إيه أول حاجة بتعملها؟',
+    opts:['بتاخدها على طول','بتصورها وتبعتها لحد','بتبص وتمشي وتفضل تفكر','بتحسب هتتأكل في كام وجبة 😂'],
+    res:['الحسم صفة نادرة! 💛','بتشاركي اللحظة الحلوة، ده من علامات الروح الطيبة 🌸','المشي والتفكير عادة الحساسين، وده مش عيب 🌾','✅ التخطيط الغذائي المتقدم 😂 بنت وفاء عارفة أولوياتها!']
+  },
+  {
+    q:'هاجر بتضحك من قلبها أكتر لما؟',
+    opts:['لما حد يقع من غير ما يتوجع 😂','لما حد يقول جملة مش متوقعة','على نفسها','على فكرة جاتلها وهي مش صاحية أوي'],
+    res:['الضحكة على السقطات دي عدل طبيعي 😂 طول ما مفيش أذى','المفاجأة في الكلام دي أحلى نكتة 😄','الضحكة على النفس دي حكمة حقيقية وخفة دم 🌸','✅ الأفكار اللي بتيجي في النوم دي من الفئة المميزة 😂🌙']
+  },
+  {
+    q:'زعفرانة بالنسبة لهاجر هي؟',
+    opts:['البداية','البيت الحقيقي','الجذور اللي مش بتتنسى','كل ده مع بعض 🌾'],
+    res:['البداية الكويسة بتحدد كل حاجة جاية. محظوظة 💛','البيت مش بيتبنى بالطوب بس، ببيتبنى بالناس والذكريات 🌾','الجذور هي اللي بتخلي الشجرة تصمد. زيك كده 🌿','✅ زعفرانة فيها كل ده وأكتر. ومنها جات هاجر 🌾💛']
+  },
+  {
+    q:'لو هاجر زهقت، إيه أول حاجة بتعملها؟',
+    opts:['بتنام','بتفتح موبايلها','بتاكل حاجة','بتعمل حاجة ما عملتهاش من فترة'],
+    res:['النوم هروب شريف ومحترم 😄','الموبايل دواء العصر وإن كانت له أعراض جانبية 😂','✅ الأكل علاج مضمون النتايج! بنت وفاء عارفة 🍕','ده أذكى رد على الزهق، تكسري الروتين 🌟']
+  },
+];
+
+const snacks = [
+  {night:true,  t:'🌙 البيت اتنام والدنيا هادية... يا ترى إيه اللي في الثلاجة دلوقتي؟ 😄 الأكل بالليل لما ما فيش غيرك صاحي ليه طعم تاني خالص!'},
+  {night:true,  t:'🍕 نصيحة من خبراء الليل: اللي بياكل في الليل وحده بيبقى ليه تقدير أعمق للأكل. أرقى بكتير من الأكل على المايدة 😂'},
+  {night:false, t:'☀️ الصبح وقت تاني خالص. بس لو صاحية من الليل لسه، يبقى إنتِ من الفئة المختارة 😄🌾'},
+  {night:true,  t:'🧀 الجردقة في الليل بلا محاكمة، دي من أقدس الحريات الإنسانية. إنتِ عارفة كده 😂'},
+  {night:true,  t:'🍫 الحلو بالليل بيبقى أحلى. ده مش كلام، ده علم أثبتته نساء كتير من زعفرانة وغيرها 😄'},
+  {night:false, t:'🌅 الصبح فيه حاجة هادية وحلوة. حتى لو مش بتحبي الصبح، في الصبح دايماً بداية جديدة 🌾'},
+  {night:true,  t:'🥪 في الليل التفكير بيبقى أعمق والأكل بيبقى أحلى. مش صدفة إن الإلهام بيجي بالليل 🌙'},
+  {night:true,  t:'🍵 كوباية شاي بالليل وهو ما فيش صوت غير الهدوء... دي لحظة مش بيحس بيها غير ناس خاصة 🌙'},
+  {night:true,  t:'🌙 أعظم قرارات في الحياة اتخدت وهو البيت نايم والواحد بياكل بسكويت. الليل بيجيب الوضوح 😄'},
+];
+
+const advices = [
+  {i:'💡',t:'لو في حاجة بتضحكك من قلبك، سجليها في دماغك كويس. اللحظات دي هي اللي بتخلي الحياة تستاهل.'},
+  {i:'🌙',t:'الليل الهادي وقت تفكير. بس متفكريش في الصعب بس، فكري في الحاجات الحلوة اللي حصلت.'},
+  {i:'🌾',t:'الأصل مش حاجة بتتخجلي منها، الأصل كنز. وزعفرانة كنز من نوع خاص 💛'},
+  {i:'😄',t:'الضحكة من قلبك دي صحة. محدش يقولك "كبري شوية". الفرح موهبة مش طفولة.'},
+  {i:'🌿',t:'لما حاجة تتعبك، قوليها بصوت لو لوحدك. الجوا ما بيسمعش، بس الكلام بالصوت بيريح.'},
+  {i:'🍵',t:'خدي وقت لنفسك من غير ما تبرريه لحد. راحة إنتِ وكوباية شاي دي مش كسل، دي صحة نفسية.'},
+  {i:'💛',t:'الطيبة اللي بتديها للناس، ربنا بيرجعهالك بطرق تانية. استمري 🌸'},
+  {i:'🌙',t:'قبل ما تناميه، فكري في حاجة واحدة كويسة حصلت النهارده. لو مش لاقية، خلي النوم نفسه يكون هي.'},
+  {i:'🌾',t:'الهزار والضحك مش هروب من الحياة. ده طريقة تعيشيها بقلب خفيف. وده أصعب بكتير مما بيبان.'},
+  {i:'⭐',t:'مش لازم تبقي كاملة عشان تبقي كويسة. كويسة أحياناً أحسن من كاملة بمراحل.'},
+  {i:'🌿',t:'لما تحسي بالزعل، كوليه وقت. بس متديهوش كل الوقت. الزعل أجاره ما بيطولش.'},
+  {i:'😊',t:'احتفلي بالحاجات الصغيرة. الأكل التحفة، النوم الكويس، الضحكة المفاجأة. ده هو العيش.'},
+  {i:'🍕',t:'الأكل بالليل مش عيب، ده استثمار عاطفي في السعادة الشخصية 😄 والأدلة العلمية من زعفرانة بتأكد.'},
+];
+
+const challenges = [
+  {t:'تحدي الشكر الصغير 💛',d:'فكري في 3 حاجات صغيرة حصلتلك النهارده وتشكري ربنا عليها. مش لازم تكون كبيرة.'},
+  {t:'تحدي الأكل المحترم 😄',d:'المرة الجاية لما تاكلي بالليل، اعمليه بأسلوب. صحن كويس وجو هادي. الأكل يستاهل 🍕'},
+  {t:'تحدي الرسالة 🌾',d:'ابعتي رسالة لحد ما بعتيلوش من فترة. من غير مناسبة. بس "بفكر فيك".'},
+  {t:'تحدي الضحكة المقصودة 😂',d:'افتحي فيديو بيضحككِ أو افتكري موقف مضحك وضحكي منه. الضحكة المقصودة بتنفع زي التلقائية.'},
+  {t:'تحدي زعفرانة 🌾',d:'افتكري حاجة واحدة حلوة من طفولتك في زعفرانة. وسجليها. الذكريات دي كنز مش بيتعوض.'},
+  {t:'تحدي الهدوء 🌙',d:'5 دقايق من غير موبايل من غير صوت. بس إنتِ وأفكارك. شوفي إيه اللي هيجي في بالك.'},
+  {t:'تحدي المدح 💛',d:'قولي لنفسك في المرايا 3 حاجات حلوة فيكِ. من قلبك من غير خجل. تستحقي.'},
+  {t:'تحدي "يوم ما" 🌿',d:'اعمليله حاجة كنتِ بتقولي "يوم ما هعملها". خليه النهارده يبقى اليوم ده.'},
+  {t:'تحدي الأغنية 🎵',d:'ابعتي أغنية لحد بتحبيه من غير ما تشرحي ليه. الأغنية هتشرح وحدها.'},
+];
+
+const facts = [
+  '🌾 زعفرانة... اسم فيه ريحة الأرض والبساطة والحقيقة. مش كل الأماكن بتخلي ناسها يكبروا بقلب طيب، بس في أماكن زي دي بيبقى في التربية حاجة خاصة مش بتتوصف.',
+  '🌙 في الليالي الهادية، الناس اللي من القرى والمناطق البعيدة عن الزحمة بيبقوا عندهم حاجة مميزة... بيعرفوا يحسوا بالهدوء مش بس يشوفوه.',
+  '🌿 الناس اللي كبرت بعيد عن الضوضاء عندها موهبة الاستماع. مش بس بتسمع الكلام، بتسمع اللي وراه كمان. وده نادر جداً.',
+  '⭐ في ناس الابتسامة عندهم ما بتكلفهاش حاجة، وبتدي الناس التانية حاجة كتير. النوع ده من الناس بيفرق في أي مكان بيروحه.',
+  '🌾 الحياة في المناطق الهادية بتعلم الصبر. والصبر مش معناه إنك واقف، معناه إنك بتكمل وإنت عارف إن كل حاجة ليها وقتها.',
+  '🍃 البساطة مش فقر. البساطة هي إنك تعرف إيه اللي محتاجاه فعلاً وتبقى مكتفي بيه. وده أصعب درس في الحياة.',
+  '🌙 الليل في المناطق الهادية بيبقى له طعم تاني. النجوم أوضح والهواء أنظف والتفكير أعمق. ومن نشأ فيها بيحمل شيء من ده معاه.',
+  '🌾 بنت وفاء من زعفرانة... في الجملة دي حاجات كتير عن الأصل والتربية والطيبة. مش كل الناس بتيجي من تربة زيها.',
+];
+
+const moodResps = {
+  'سعيدة':'😊 أيوه كده! السعادة دي إنتِ اللي بتعمليها. خلي النهارده يكمل كويس 🌟',
+  'جعانة':'🍕 الحل واضح ومش محتاج تفكير! الثلاجة دي بتستناكِ من زمان 😄 روحي يا بنت وفاء!',
+  'زهقانة':'😴 الزهق أحياناً معناه الجسم محتاج استراحة. كوباية شاي وهدوء وكل حاجة هتبقى أحسن 🍵',
+  'زعلانة':'🥺 الزعل حق. مش لازم تتجمعيه جواكِ. لو فيه حاجة، قوليها ولو لنفسك في أوضتك. كل حاجة بتعدي 💙',
+  'مجنونة':'🤪 النسخة المجنونة دي هي الأحلى! الجنان ده طاقة متحوليش فيها للفراغ، اعمليها في حاجة تفرحك 😂✨',
+};
+
+// ── STATE ──
+let qaIdx=-1, quizIdx=-1, qaSec=30, qaInterval=null, playing=false;
+
+// ── UNLOCK ──
+function unlock(){
+  if(document.getElementById('pw').value===PASSWORD){
+    document.getElementById('lock').classList.add('gone');
+    document.getElementById('app').classList.add('show');
+    setTimeout(()=>{document.getElementById('lock').style.display='none'},1000);
+    setTimeout(initApp,600);
+  } else {
+    const c=document.getElementById('lockCard');
+    c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+    const errs=['مش كده يا هاجر، حاولي تاني 😄','لأ لأ... فكري شوية 🙈','الرقم قريب بس مش كده 😄','أسهل مما بتتخيلي 🤭'];
+    const e=document.getElementById('errMsg');
+    e.textContent=errs[Math.floor(Math.random()*errs.length)];
+    e.classList.add('show');
+    document.getElementById('pw').value='';
+    setTimeout(()=>e.classList.remove('show'),3000);
+  }
+}
+
+// ── INIT ──
+function initApp(){
+  setDateTime();
+  trackVisits();
+  loadDailyMsg();
+  loadSnack();
+  startQA();
+  loadQuiz();
+  loadAdvice();
+  loadChallenge();
+  loadFact();
+  setTimeout(runMeter,1600);
+  document.getElementById('musicBar').classList.add('on');
+  createStars();
+  createFireflies();
+}
+
+function setDateTime(){
+  const n=new Date();
+  const days=['الأحد','الإثنين','التلاتا','الأربعا','الخميس','الجمعة','السبت'];
+  const months=['يناير','فبراير','مارس','إبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  document.getElementById('dateBadge').textContent=`📅 ${days[n.getDay()]} ${n.getDate()} ${months[n.getMonth()]}`;
+  const h=n.getHours();
+  const greet=h<5?'🌙 الليل تبقى صاحية؟':h<12?'☀️ صباح النور':h<17?'🌤 مساكِ بالخير':h<21?'🌙 مساكِ ورد':'🌙 ليلتك سعيدة';
+  document.getElementById('timeBadge').textContent=greet;
+}
+
+function trackVisits(){
+  let v=parseInt(localStorage.getItem('hajar_v')||'0')+1;
+  localStorage.setItem('hajar_v',v);
+  document.getElementById('visitBadge').textContent=`🌙 زيارة #${v}`;
+}
+
+function loadDailyMsg(){
+  const m=dailyMsgs[new Date().getDate()%dailyMsgs.length];
+  document.getElementById('dayEmoji').textContent=m.e;
+  document.getElementById('dayText').textContent=m.t;
+}
+
+function loadSnack(){
+  const h=new Date().getHours();
+  const isNight=h>=21||h<6;
+  const pool=snacks.filter(s=>s.night===isNight);
+  const s=pool[Math.floor(Math.random()*pool.length)];
+  const ind=document.getElementById('snackInd');
+  ind.textContent=isNight?'🌙 إنتِ صاحية بالليل؟ ده وقتك 😄':'☀️ النهارده وقت النشاط والحركة!';
+  const el=document.getElementById('snackTxt');
+  el.classList.add('fade');
+  setTimeout(()=>{el.textContent=s.t;el.classList.remove('fade')},350);
+}
+
+// QA ROTATION
+function startQA(){
+  nextQ();
+  qaInterval=setInterval(()=>{
+    qaSec--;
+    document.getElementById('qaTimer').textContent=`بيتغير بعد ${qaSec} ثانية`;
+    document.getElementById('qaFill').style.width=(qaSec/30*100)+'%';
+    if(qaSec<=0) nextQ();
+  },1000);
+}
+function nextQ(){
+  qaSec=30;
+  let n;
+  do{n=Math.floor(Math.random()*rotatingQs.length)}while(n===qaIdx&&rotatingQs.length>1);
+  qaIdx=n;
+  const el=document.getElementById('qaQ');
+  el.classList.add('fade');
+  setTimeout(()=>{el.textContent=rotatingQs[qaIdx];el.classList.remove('fade')},350);
+  document.getElementById('qaAns').value='';
+  document.getElementById('qaOk').classList.remove('show');
+  const b=document.getElementById('sendQaBtn');b.disabled=false;b.textContent='📤 ابعتي الإجابة';
+  document.getElementById('qaFill').style.width='100%';
+  document.getElementById('qaTimer').textContent='بيتغير كل 30 ثانية';
+}
+
+async function sendQA(){
+  const ans=document.getElementById('qaAns').value.trim();
+  if(!ans){document.getElementById('qaAns').focus();return}
+  const q=document.getElementById('qaQ').textContent;
+  const b=document.getElementById('sendQaBtn');
+  b.disabled=true;b.textContent='⏳ بيتبعت...';
+  try{
+    const r=await fetch(FORM,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({_subject:'🎯 إجابة سؤال هاجر',question:q,answer:ans})});
+    if(r.ok){document.getElementById('qaOk').classList.add('show');document.getElementById('qaAns').value='';b.textContent='✅ اتبعت'}
+    else{b.disabled=false;b.textContent='❌ حاولي تاني'}
+  }catch{b.disabled=false;b.textContent='❌ تأكدي من الإنترنت'}
+}
+
+async function sendConf(){
+  const txt=document.getElementById('confText').value.trim();
+  if(!txt){document.getElementById('confText').focus();return}
+  const b=document.getElementById('confBtn');
+  b.disabled=true;b.textContent='⏳ بيتبعت...';
+  try{
+    const r=await fetch(FORM,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({_subject:'🤫 مصارحة من هاجر',message:txt})});
+    if(r.ok){document.getElementById('confOk').classList.add('show');document.getElementById('confText').value='';b.textContent='✅ اتبعت'}
+    else{b.disabled=false;b.textContent='❌ حاولي تاني'}
+  }catch{b.disabled=false;b.textContent='❌ تأكدي من الإنترنت'}
+}
+
+function loadQuiz(){
+  let n;
+  do{n=Math.floor(Math.random()*quizzes.length)}while(n===quizIdx&&quizzes.length>1);
+  quizIdx=n;const q=quizzes[quizIdx];
+  document.getElementById('quizQ').textContent=q.q;
+  document.getElementById('quizRes').classList.remove('show');
+  document.getElementById('nextQuiz').style.display='none';
+  const o=document.getElementById('quizOpts');o.innerHTML='';
+  q.opts.forEach((op,i)=>{
+    const b=document.createElement('button');b.className='quiz-opt';b.textContent=op;
+    b.onclick=()=>{
+      document.querySelectorAll('.quiz-opt').forEach(x=>{x.style.opacity='.4';x.onclick=null});
+      b.style.opacity='1';b.style.borderColor='var(--wheat)';
+      const r=document.getElementById('quizRes');r.textContent=q.res[i];r.classList.add('show');
+      document.getElementById('nextQuiz').style.display='block';
+    };
+    o.appendChild(b);
+  });
+}
+
+function runMeter(){
+  const f=document.getElementById('mFill');
+  const pct=88+Math.floor(Math.random()*12);
+  f.style.width='0%';
+  document.getElementById('mPct').textContent='---';
+  document.getElementById('meterLbl').textContent='جاري القياس... 🌾';
+  document.getElementById('mDesc').textContent='';
+  setTimeout(()=>{
+    f.style.width=pct+'%';
+    setTimeout(()=>{
+      document.getElementById('mPct').textContent=pct+'%';
+      document.getElementById('meterLbl').textContent='النتيجة رسمية ومعتمدة 📊';
+      const ds=['🌾 زعفرانة فخورة بيكِ!','💛 النتيجة تجاوزت كل التوقعات!','🌙 رقم تاريخي مش هينتسى!','✨ المقياس مش مصدق نفسه!'];
+      document.getElementById('mDesc').textContent=ds[Math.floor(Math.random()*ds.length)];
+    },1100);
+  },300);
+}
+
+function pickMood(el,mood){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const r=document.getElementById('moodRes');
+  r.textContent=moodResps[mood];r.classList.add('show');
+}
+
+function loadAdvice(){
+  const el=document.getElementById('advTxt');
+  el.classList.add('fade');
+  setTimeout(()=>{
+    const a=advices[Math.floor(Math.random()*advices.length)];
+    document.getElementById('advIcon').textContent=a.i;
+    el.textContent=a.t;el.classList.remove('fade');
+  },350);
+}
+
+function loadChallenge(){
+  const c=challenges[Math.floor(Math.random()*challenges.length)];
+  document.getElementById('challT').textContent=c.t;
+  document.getElementById('challD').textContent=c.d;
+}
+
+function loadFact(){
+  const el=document.getElementById('factTxt');
+  el.classList.add('fade');
+  setTimeout(()=>{
+    el.textContent=facts[Math.floor(Math.random()*facts.length)];
+    el.classList.remove('fade');
+  },350);
+}
+
+// MUSIC
+const audio=document.getElementById('bgMusic');
+function toggleMusic(){
+  if(playing){audio.pause();playing=false;document.getElementById('playBtn').textContent='▶'}
+  else{audio.play().catch(()=>{});playing=true;document.getElementById('playBtn').textContent='⏸'}
+}
+function seekMusic(v){if(audio.duration)audio.currentTime=audio.duration*(v/100)}
+function fmt(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return`${m}:${ss<10?'0':''}${ss}`}
+audio.addEventListener('timeupdate',()=>{
+  const p=(audio.currentTime/audio.duration*100)||0;
+  const b=document.getElementById('mProg');b.value=p;b.style.setProperty('--p',p+'%');
+  document.getElementById('cTime').textContent=fmt(audio.currentTime);
+});
+audio.addEventListener('loadedmetadata',()=>{document.getElementById('mDur').textContent=fmt(audio.duration)});
+
+// STARS
+function createStars(){
+  const w=document.getElementById('starsWrap');
+  for(let i=0;i<50;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=1+Math.random()*2.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${.4+Math.random()*.5};animation-delay:${Math.random()*5}s`;
+    w.appendChild(s);
+  }
+}
+
+// FIREFLIES
+function createFireflies(){
+  const w=document.getElementById('firefliesWrap');
+  for(let i=0;i<10;i++){
+    const f=document.createElement('div');f.className='firefly';
+    const tx=(Math.random()-0.5)*120,ty=(Math.random()-0.5)*100;
+    const tx2=(Math.random()-0.5)*80,ty2=(Math.random()-0.5)*60;
+    f.style.cssText=`left:${Math.random()*100}vw;top:${Math.random()*100}vh;--d:${7+Math.random()*10}s;--tx:${tx}px;--ty:${ty}px;--tx2:${tx2}px;--ty2:${ty2}px;animation-delay:${Math.random()*8}s`;
+    w.appendChild(f);
+  }
+}
+
+// CLICK SPARKLES
+document.addEventListener('click',e=>{
+  const sp=['🌾','✨','💛','🌙','🌿','⭐'];
+  const el=document.createElement('div');el.className='sparkle';
+  el.textContent=sp[Math.floor(Math.random()*sp.length)];
+  el.style.left=e.clientX+'px';el.style.top=e.clientY+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1000);
+});
+
+// CONFETTI
+function burst(btn){
+  const colors=['#e8c97a','#c9813a','#7fac6e','#7a3e10','#fde68a','#fff'];
+  const rect=btn.getBoundingClientRect();
+  const w=document.createElement('div');w.className='cwrap';
+  w.style.cssText=`left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px`;
+  document.body.appendChild(w);
+  for(let i=0;i<22;i++){
+    const p=document.createElement('div');p.className='cp';
+    const ang=(Math.PI*2/22)*i,dist=50+Math.random()*90;
+    p.style.cssText=`background:${colors[i%colors.length]};--tx:${Math.cos(ang)*dist}px;--ty:${Math.sin(ang)*dist-30}px;--tr:${Math.random()*720-360}deg;animation-delay:${Math.random()*.15}s`;
+    w.appendChild(p);
+  }
+  setTimeout(()=>w.remove(),2000);
+}
+
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
+</script>
+</body>
+</html>
