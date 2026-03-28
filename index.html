@@ -688,7 +688,8 @@ async function sendQA(){
   const b=document.getElementById('sendQaBtn');
   b.disabled=true;b.textContent='⏳ بيتبعت...';
   try{
-    const r=await fetch(FORM,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+    const r=await fetch(FORM,{method:'POST',
+      body:new URLSearchParams({_subject:'🎯 إجابة سؤال هاجر',question:q,answer:ans})});
       body:JSON.stringify({_subject:'🎯 إجابة سؤال هاجر',question:q,answer:ans})});
     if(r.ok){document.getElementById('qaOk').classList.add('show');document.getElementById('qaAns').value='';b.textContent='✅ اتبعت'}
     else{b.disabled=false;b.textContent='❌ حاولي تاني'}
@@ -701,7 +702,8 @@ async function sendConf(){
   const b=document.getElementById('confBtn');
   b.disabled=true;b.textContent='⏳ بيتبعت...';
   try{
-    const r=await fetch(FORM,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+    const r=await fetch(FORM,{method:'POST',
+      body:new URLSearchParams({_subject:'🤫 مصارحة من هاجر',message:txt})});
       body:JSON.stringify({_subject:'🤫 مصارحة من هاجر',message:txt})});
     if(r.ok){document.getElementById('confOk').classList.add('show');document.getElementById('confText').value='';b.textContent='✅ اتبعت'}
     else{b.disabled=false;b.textContent='❌ حاولي تاني'}
