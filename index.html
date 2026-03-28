@@ -231,7 +231,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--night);min-height:100vh;o
   background:linear-gradient(90deg,var(--earth),var(--saffron),var(--wheat));
   box-shadow:0 0 17px rgba(232,201,122,.38);transition:width 1.9s cubic-bezier(.34,1.56,.64,1)}
 .meter-pct{font-size:1.55rem;font-weight:900;color:var(--wheat);margin-bottom:4px}
-.meter-desc{font-size:.83repcolor:rgba(255,255,255,.46);min-height:17px}
+.meter-desc{font-size:.83rem;color:rgba(255,255,255,.46);min-height:17px}
 
 /* MOOD */
 .mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
@@ -690,7 +690,6 @@ async function sendQA(){
   try{
     const r=await fetch(FORM,{method:'POST',
       body:new URLSearchParams({_subject:'🎯 إجابة سؤال هاجر',question:q,answer:ans})});
-      body:JSON.stringify({_subject:'🎯 إجابة سؤال هاجر',question:q,answer:ans})});
     if(r.ok){document.getElementById('qaOk').classList.add('show');document.getElementById('qaAns').value='';b.textContent='✅ اتبعت'}
     else{b.disabled=false;b.textContent='❌ حاولي تاني'}
   }catch{b.disabled=false;b.textContent='❌ تأكدي من الإنترنت'}
@@ -704,7 +703,6 @@ async function sendConf(){
   try{
     const r=await fetch(FORM,{method:'POST',
       body:new URLSearchParams({_subject:'🤫 مصارحة من هاجر',message:txt})});
-      body:JSON.stringify({_subject:'🤫 مصارحة من هاجر',message:txt})});
     if(r.ok){document.getElementById('confOk').classList.add('show');document.getElementById('confText').value='';b.textContent='✅ اتبعت'}
     else{b.disabled=false;b.textContent='❌ حاولي تاني'}
   }catch{b.disabled=false;b.textContent='❌ تأكدي من الإنترنت'}
